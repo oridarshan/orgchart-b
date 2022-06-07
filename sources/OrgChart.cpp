@@ -141,8 +141,30 @@ namespace ariel
                 return pchild;
             }
         }
+        //visited all the tree (at root)
+        if (!curr_node->father)
+        {
+            //reset marks
+            reset_marks(curr_node);
+            return nullptr;
+        }
+        
         //already visited all sub-trees, find next child for father
         return next_pre_order(curr_node->father);
+    }
+
+    void OrgChart::preorder_iterator::reset_marks(Node *root){
+        std::queue<Node*> temp;
+        temp.push(root);
+        while (!temp.empty())
+        {
+            Node *curr_node = temp.front();
+            for (Node *pchild : curr_node->children){
+                temp.push(pchild);
+            }
+            curr_node->mark = false;
+            temp.pop();
+        }
     }
 
 
