@@ -3,6 +3,31 @@
 
 namespace ariel
 {
+    OrgChart::OrgChart(const OrgChart &other):root(nullptr),last_level(nullptr)
+    {
+        add_root(other.root->name);
+        for (size_t i = 1; i < other._data.size(); i++)
+        {
+            add_sub(other._data.at(i)->father->name, other._data.at(i)->name);
+        }
+        
+    }
+    OrgChart& OrgChart::operator=(const OrgChart& other) {
+        if (this==&other){
+            return *this;
+        }
+        //free old memory
+        for(Node *node : _data){
+            delete(node);
+        }
+        //add new data
+        add_root(other.root->name);
+        for (size_t i = 1; i < other._data.size(); i++)
+        {
+            add_sub(other._data.at(i)->father->name, other._data.at(i)->name);
+        }
+        return *this;
+    }
 
     OrgChart::~OrgChart()
     {
@@ -11,7 +36,7 @@ namespace ariel
         }
     }
     //TODO remove or reactivate
-    OrgChart::Node* OrgChart::search_node(std::string name)
+    OrgChart::Node* OrgChart::search_node(const std::string &name)
     {
         OrgChart::Node *pnode = nullptr;
         for(Node *node  : _data){
@@ -20,16 +45,16 @@ namespace ariel
                 pnode = node;
             }
         }
-        if(!pnode){
+        if(!bool(pnode)){
             throw "employer doesn't exist";}
             //TODO delete prints
         // std::cout << "searched for "<< name << "\nchildren:" << std::endl;
         return pnode;
     }
 
-    OrgChart& OrgChart::add_root(std::string name)
+    OrgChart& OrgChart::add_root(const std::string &name)
     {
-        if (_data.size() == 0){
+        if (_data.empty()){
             Node *new_root =new Node(name);
             new_root->level = 0;
             _data.push_back(new_root);
@@ -43,7 +68,7 @@ namespace ariel
         return *this;
     }
     
-    OrgChart& OrgChart::add_sub(std::string father, std::string name)
+    OrgChart& OrgChart::add_sub(const std::string &father, const std::string &name)
     {
         //TODO delete prints
         // std::cout << "before adding " << name << ":\n" << *this << std::endl;
@@ -102,16 +127,16 @@ namespace ariel
     }
 
     OrgChart::reverse_level_order_iterator& OrgChart::reverse_level_order_iterator::operator++(){
-        if (current_node_p->next &&
+        if (bool(current_node_p->next) &&
              current_node_p->next->level == current_node_p->level)
         {
             current_node_p = current_node_p->next;
             return *this;
         }
-        if (current_node_p->father)
+        if (bool(current_node_p->father))
         {
             Node *next_rev = current_node_p->father;
-            while (next_rev->prev &&
+            while (bool(next_rev->prev) &&
                  next_rev->prev->level== next_rev->level)
             {
                 next_rev = next_rev->prev;
@@ -132,7 +157,7 @@ namespace ariel
     } 
 
     OrgChart::Node* OrgChart::preorder_iterator::next_pre_order(Node * curr_node){
-        if(!curr_node){return nullptr;}
+        if(!bool(curr_node)){return nullptr;}
         //loop over chilren, return first unmarked (and mark it)
         for (Node *pchild : curr_node->children){
             if (!pchild->mark)
@@ -142,7 +167,7 @@ namespace ariel
             }
         }
         //visited all the tree (at root)
-        if (!curr_node->father)
+        if (!bool(curr_node->father))
         {
             //reset marks
             reset_marks(curr_node);

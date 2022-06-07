@@ -7,7 +7,6 @@ namespace ariel
     class OrgChart
     {
     private:
-        int _mod_count;
         // inner struct
         struct Node
         {
@@ -16,9 +15,9 @@ namespace ariel
             Node* next = nullptr;
             Node* prev = nullptr;
             std::vector<Node*> children;
-            int level;
+            int level = -1;
             bool mark = false;
-            Node(std::string name):name(name){}
+            Node(std::string name):name(std::move(name)){}
             };
         // vector stores data by level order
         std::vector<Node*> _data;
@@ -26,16 +25,20 @@ namespace ariel
         Node *root;
         Node *last_level;
         // Return next step in pre-order
-        Node* next_pre_order(Node * curr_node){return curr_node;}
+        static Node* next_pre_order(Node * curr_node){return curr_node;}
         // TODO search for a node, return reference
-        Node* search_node(std::string name);
+        Node* search_node(const std::string &name);
         //throw if chart empty
-        void not_empty(){if(!root){throw "chart is empty!";}}
+        void not_empty(){if(!bool(root)){throw "chart is empty!";}}
     public:
-        OrgChart():_mod_count(0),root(nullptr),last_level(nullptr){}
+        OrgChart():root(nullptr),last_level(nullptr){}
+        OrgChart(const OrgChart &other);
+        OrgChart(OrgChart && other) = delete;
+        OrgChart& operator=(const OrgChart& other);
+        OrgChart& operator=(OrgChart && other) = delete;
         ~OrgChart();
-        OrgChart& add_root(std::string name);
-        OrgChart& add_sub(std::string name, std::string father);
+        OrgChart& add_root(const std::string &name);
+        OrgChart& add_sub(const std::string &father, const std::string &name);
 
 
         // level_order_iterator inner class
@@ -91,9 +94,9 @@ namespace ariel
         private:
             Node* current_node_p;
             // Return next step in pre-order
-            Node* next_pre_order(Node * curr_node);
+            static Node* next_pre_order(Node * curr_node);
             //Reset marks
-            void reset_marks(Node *root);
+            static void reset_marks(Node *root);
         public:
             preorder_iterator(Node* ptr = nullptr):current_node_p(ptr){}            
             // unary operators
