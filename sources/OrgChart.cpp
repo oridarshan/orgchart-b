@@ -35,9 +35,7 @@ namespace ariel
             _data.push_back(root);
         }
         else{
-            std::cout << "before root changed: "<< *this << std::endl;
-            _data.at(0)->name = "name";
-            std::cout << "after root changed: "<< *this << std::endl;
+            _data.at(0)->name = name;
         }
         return *this;
     }
@@ -45,10 +43,10 @@ namespace ariel
     OrgChart& OrgChart::add_sub(std::string father, std::string name)
     {
         //TODO delete prints
-        std::cout << "before adding " << name << ":\n" << *this << std::endl;
+        // std::cout << "before adding " << name << ":\n" << *this << std::endl;
         if (_data.empty())
         {
-            std::cout << "can't add sub before root" << std::endl;
+            // std::cout << "can't add sub before root" << std::endl;
             throw "can't add sub before root";
         }
         // find father
@@ -84,7 +82,7 @@ namespace ariel
         
         _data = new_order;
         //TODO delete prints
-        std::cout << "after adding " << name << ":\n" << *this << std::endl;
+        // std::cout << "after adding " << name << ":\n" << *this << std::endl;
                 
         return *this;
     }

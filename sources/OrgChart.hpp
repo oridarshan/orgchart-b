@@ -45,7 +45,7 @@ namespace ariel
         OrgChart& add_sub(std::string name, std::string father);
 
 
-// preorder_iterator inner class
+        // level_order_iterator inner class
         class level_order_iterator
         {
         private:
@@ -60,10 +60,34 @@ namespace ariel
                 return *this;} 
             // binary operators
             bool operator==(const level_order_iterator& itr) const{
-                return false;
+                return current_node_p == itr.current_node_p;
             }
             bool operator!=(const level_order_iterator& itr) const{
-                return false;
+                return !(*this == itr);
+            };
+        
+        };
+        
+        
+        // reverse_level_order_iterator inner class
+        class reverse_level_order_iterator
+        {
+        private:
+            Node* current_node_p;
+        public:
+            reverse_level_order_iterator(Node* ptr = nullptr):current_node_p(ptr){}
+            // unary operators
+            const std::string& operator*() const {return current_node_p->name;} 
+            const std::string* operator->() const {return &(current_node_p->name);} 
+            reverse_level_order_iterator& operator++(){
+                current_node_p = current_node_p->prev;
+                return *this;} 
+            // binary operators
+            bool operator==(const reverse_level_order_iterator& itr) const{
+                return current_node_p == itr.current_node_p;
+            }
+            bool operator!=(const reverse_level_order_iterator& itr) const{
+                return !(*this == itr);
             };
         
         };
@@ -94,10 +118,10 @@ namespace ariel
         level_order_iterator end(){return level_order_iterator(nullptr);}
         level_order_iterator begin_level_order(){return begin();}
         level_order_iterator end_level_order(){return end();}
-        level_order_iterator begin_reverse_order(){return begin();}
-        level_order_iterator end_reverse_order(){return end();}
+        reverse_level_order_iterator begin_reverse_order(){return reverse_level_order_iterator(_data.back());}
+        reverse_level_order_iterator end_reverse_order(){return reverse_level_order_iterator();}
         //cover for mistake in Demo.cpp
-        level_order_iterator reverse_order(){return end();}
+        reverse_level_order_iterator reverse_order(){return end_reverse_order();}
         preorder_iterator begin_preorder(){return preorder_iterator((_data.at(0)));}
         preorder_iterator end_preorder(){return preorder_iterator(nullptr);}
         
